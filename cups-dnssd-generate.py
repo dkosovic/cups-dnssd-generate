@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ## cups-dnssd-generate.py
 
@@ -22,7 +22,7 @@
 Generate Wide Area Bonjour DNS Zone file fragment from querying a CUPS server
 """
 
-import cups, os, optparse, re, urlparse
+import cups, os, optparse, re, urllib.parse
 import os.path
 import sys
 
@@ -76,11 +76,11 @@ class DNSZoneGenerate(object):
 
         printers = conn.getPrinters()
 
-        for p in sorted(printers.iterkeys()):
+        for p in sorted(printers.keys()):
             v = printers[p]
             if v['printer-is-shared']:
                 attrs = conn.getPrinterAttributes(p)
-                uri = urlparse.urlparse(v['printer-uri-supported'])
+                uri = urllib.parse.urlparse(v['printer-uri-supported'])
 
                 f = conn.getPPD(p)
                 ppd = cups.PPD(f)
@@ -189,26 +189,26 @@ class DNSZoneGenerate(object):
 
                 encodedLabel = self.encode(p)
                 # print ipp records
-                print '_ipp\t\t\tPTR\t{0}._ipp'.format(encodedLabel)
-                print '_cups._sub._ipp\t\tPTR\t{0}._ipp'.format(encodedLabel)
-                print '_universal._sub._ipp\tPTR\t{0}._ipp'.format(encodedLabel)
+                print('_ipp\t\t\tPTR\t{0}._ipp'.format(encodedLabel))
+                print('_cups._sub._ipp\t\tPTR\t{0}._ipp'.format(encodedLabel))
+                print('_universal._sub._ipp\tPTR\t{0}._ipp'.format(encodedLabel))
 
-                print '{0}._ipp\t\tSRV\t0 0 {1} {2}.'.format(encodedLabel, port_no, self.host)
+                print('{0}._ipp\t\tSRV\t0 0 {1} {2}.'.format(encodedLabel, port_no, self.host))
 
                 sys.stdout.write('{0}._ipp\t\tTXT\t"txtvers=1" "qtotal=1" '.format(encodedLabel))
-                print ' '.join(txtRec)
-                print
+                print(' '.join(txtRec))
+                print()
 
                 # print ipps records
-                print '_ipps\t\t\tPTR\t{0}._ipps'.format(encodedLabel)
-                print '_cups._sub._ipps\tPTR\t{0}._ipps'.format(encodedLabel)
-                print '_universal._sub._ipps\tPTR\t{0}._ipps'.format(encodedLabel)
+                print('_ipps\t\t\tPTR\t{0}._ipps'.format(encodedLabel))
+                print('_cups._sub._ipps\tPTR\t{0}._ipps'.format(encodedLabel))
+                print('_universal._sub._ipps\tPTR\t{0}._ipps'.format(encodedLabel))
 
-                print '{0}._ipps\t\tSRV\t0 0 {1} {2}.'.format(encodedLabel, port_no, self.host)
+                print('{0}._ipps\t\tSRV\t0 0 {1} {2}.'.format(encodedLabel, port_no, self.host))
 
                 sys.stdout.write('{0}._ipps\t\tTXT\t"txtvers=1" "qtotal=1" '.format(encodedLabel))
-                print ' '.join(txtRec)
-                print
+                print(' '.join(txtRec))
+                print()
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
